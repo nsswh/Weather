@@ -47,7 +47,7 @@ export default class App extends Component {
                 }
             }
         }
-        // the state url change will trigger data loading from the backend
+        // the state URL change will trigger data loading from the backend
         this.setState({
             url: url, city: '', days: ''
         })
@@ -95,9 +95,9 @@ export default class App extends Component {
 
     // conditional rendering of welcome message when the app starts, or no matching result message when no results from the backend
     render() {
-        let contents = this.state.juststarting ? <div className="mx-auto text-info"><h3>Welcome to the weather forecast, please type a city name to start</h3></div> :
+        let contents = this.state.juststarting ? <div className="mx-auto text-info"><h3>Welcome to the weather forecast. Please type a city name to start.</h3></div> :
             (this.state.loading ? <div className="mx-auto"><p><em>Loading...</em></p></div> :
-                (this.state.forecasts.length == 0 ? <div className="mx-auto text-warning"><h3>Sorry there is no city name match your input, please try again</h3></div> :
+                (this.state.forecasts.length == 0 ? <div className="mx-auto text-warning"><h3>Sorry, there is no city name that matches your input. Please try again.</h3></div> :
                     App.renderForecastsTable(this.state.forecasts)));
 
         return (
@@ -140,7 +140,7 @@ export default class App extends Component {
     async populateWeatherData() {
         const response = await fetch(this.state.url);
         const data = await response.json();
-        // after data loaded from the backend, set the state url to be empty string so that componentDidUpdate() won't load the data from the backend again
+        // after data loaded from the backend, set the state URL to an empty string so that componentDidUpdate() won't load the data from the backend again
         this.setState({ forecasts: data, loading: false, url: '' });
     }
 }
