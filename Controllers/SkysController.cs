@@ -20,20 +20,19 @@ namespace Weather.Controllers
         }
 
         [HttpGet("{city}/{days:int=15}")]
-        public async Task<IAsyncEnumerable<Sky>> GetSkys(string city, int days)
+        public async Task<IQueryable<Sky>> GetSkys(string city, int days)
         {
             int diff = 0;
-            // check if city name is in the database; otherwise it is a newly searched city
-            if (!context.Skys.Any(o => o.City.ToLower() == city.ToLower()))
+            // select the 1st item if city name is in the database
+            var fst = context.Skys.Where(o => o.City.ToLower() == city.ToLower()).FirstOrDefault();
+
+            if (fst == null)
             {
                 // if city name is not in database, call web service to import 15 rows of the new city’s weather data into the database
                 await AddNewCityWeather(city);
             }
             else
             {
-                // select the 1st item if city name is in the database
-                var fst = context.Skys.Where(x => x.City != null && x.City.ToLower() == city.ToLower()).First();
-
                 // check the city timestamp in database if it is 4 hours before
                 diff = Convert.ToInt32(DateTime.UtcNow.Subtract(Convert.ToDateTime(fst.Timestamp)).TotalMinutes);
                 if (diff >= 240)
@@ -46,8 +45,8 @@ namespace Weather.Controllers
             }
 
             // send the city weather data in the database to the frontend to display, select by city name maximum 15 items
-            var sks = (IAsyncEnumerable<Sky>)context.Skys.Where(x => x.City.ToLower() == city.ToLower()).
-                Select(x => new Sky { City = x.City, Timestamp = x.Timestamp, Day = x.Day, Temp = x.Temp, Preciptype = x.Preciptype }).Take(days);
+            var sks = (IQueryable<Sky>)context.Skys.Where(x => x.City.ToLower() == city.ToLower()).
+                Select(x => new Sky { City = x.City, Timestamp = x.Timestamp, Day = x.Day, Temp = x.Temp, Preciptype = x.Preciptype }).OrderBy(x => x.Day).Take(days);
 
             return sks;
         }
