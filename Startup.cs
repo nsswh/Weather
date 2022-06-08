@@ -36,6 +36,8 @@ namespace Weather
             //services.Configure<JsonOptions>(opts => {
             //    opts.JsonSerializerOptions.IgnoreNullValues = true;
             //});
+            
+            services.AddScoped<ISkyRepository, EFSkyRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
